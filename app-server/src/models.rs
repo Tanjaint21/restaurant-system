@@ -234,22 +234,7 @@ impl OrderItem {
         Ok(last_inserted_id)
     }
 
-    /// List all orders items
-    /*
-    pub fn list(conn: &rusqlite::Connection) -> rusqlite::Result<Vec<OrderItem>> {
-        let mut stmt = conn.prepare("SELECT * FROM order_items")?;
-        let rows = stmt.query_map(params![], |row| {
-            Ok(OrderItem {
-                id: row.get(0)?,
-                order_id: row.get(1)?,
-                menu_id: row.get(2)?,
-                cooking_tme: row.get(3)?,
-            })
-        })?;
-
-        Ok(rows.map(|result| result.unwrap()).collect())
-    }
-    */
+ 
     /// List all orders items for a specific order
     pub fn list_all_order_items(conn: &rusqlite::Connection, order_id:i64) -> rusqlite::Result<Vec<OrderItemResponse>> {
         let mut stmt = conn.prepare("SELECT order_items.id, order_items.order_id, order_items.menu_id, m.name, order_items.quantity, order_items.cooking_time FROM order_items JOIN menus as m on order_items.menu_id=m.id WHERE order_id= ?1")?;
