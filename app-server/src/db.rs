@@ -1,8 +1,9 @@
 use rusqlite::Connection;
 
 //create database
-pub fn get_db_conn()->Connection{
-    let conn = Connection:open("restaurant.db").expect("failed to open SQlite connection");
+pub fn get_db_conn() -> Connection{
+    let conn = Connection::open("restaurant.db").expect("failed to open SQlite connection");
+    conn
 }
 
 pub fn initialize_db(){

@@ -16,12 +16,12 @@ use crate::db::get_db_conn;
 use std::conveert::Infallible;
 
 async fn handle_rejection(err: Rejection)-> result<impl Reply, Rejection>{
-    if err.if_not_found(){
+    if err.is_not_found(){
         Ok(warp::Reply::with_status(
             warp::reply::json(&format!("Error: {:?}", err)),
             warp::http::StatusCode::NOT_FOUND,
         ))
-    }else if let SOme(_) = err.find::<warp::filter:body::BodyDeserialiseError>()
+    } else if let Some(_) = err.find::<warp::filter::body::BodyDeserialiseError>()
     {
         Ok(warp::reply::with_status(
             warp::reply::json(&format!("Error: Failed to deserialize request body"))
@@ -32,7 +32,7 @@ async fn handle_rejection(err: Rejection)-> result<impl Reply, Rejection>{
     {
         ok(warp::Reply::with_status(
             warp::reply::json(&format!("Error: {:?}", err)),
-            warp::http::StatusCode::INTER_SERVER_ERROR,
+            warp::http::StatusCode::INTERNAL_SERVER_ERROR,
         ))
     }
 }
@@ -41,7 +41,7 @@ fn with_db() -> impl Filter<Extract = (Connection,), Error = Infallible> + Clone
     warp::any().map(||get_db_conn())
 }
 
-pub fn list_all_order_route() -> impl Filter<Extract =impl Reply, Error = Rejection> + Clone{
+pub fn list_all_order_route() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone{
     return warp::path!("orders")
     .and(warp::get())
     .and(with_db())
